@@ -1,0 +1,61 @@
+
+
+/* Header area with back button and title */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Back button */
+.back-button {
+  background: transparent;
+  border: none;
+  color: #efeb06;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px 0 10px 0;
+  padding: 4px 8px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #000000b5;
+  color: white;
+}
+
+/* Icon spacing inside back button */
+.back-button svg {
+  margin-right: 5px;
+  font-size: 26px;
+}
+
+/* Title */
+h1 {
+  margin: 0;
+  font-size: 24px;
+  flex-grow: 1;
+  text-align: center;
+  color: #fff;
+}
+
+/* Each date item style */
+.todo-item {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 10px 0 10px 0;
+  border: 1px solid #ffcc66;
+  background-color: #3a3a3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  color: #fff;
+}
+
+

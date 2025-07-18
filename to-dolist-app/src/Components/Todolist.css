@@ -12,7 +12,7 @@ body {
   box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.1);
 }
 h1 {
-  color: #fff;
+  color: #de0c0c;
   font-size: 24px;
   margin-bottom: 20px;
   text-align: center;
@@ -87,3 +87,26 @@ h1 {
 .button-group:hover {
   opacity: 0.8;
 }
+
+.bottom-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+.save-btn {
+  padding: 8px;
+  background-color: #ffc107;
+  border: none;
+  
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color: #000;
+  color: white;
+}
+

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
 import "./Todolist.css";
 import {
   BiCheckDouble,
@@ -10,7 +12,9 @@ import {
 } from "react-icons/bi";
 
 function Todolist() {
-  // Initialize todos state directly from localStorage
+  const { date } = useParams(); // Get the selected date from the URL
+  const navigate = useNavigate(); // For navigation
+
   const [todos, setTodos] = useState(() => {
     try {
       const storedTodos = localStorage.getItem("todos");
@@ -20,18 +24,17 @@ function Todolist() {
       return [];
     }
   });
+
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState(-1);
   const isFirstRender = useRef(true);
 
-  // Save todos to localStorage when todos change
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      return; // Skip the first render to avoid saving empty todos
+      return;
     }
     try {
-      console.log("Saving todos to localStorage:", todos);
       localStorage.setItem("todos", JSON.stringify(todos));
     } catch (error) {
       console.error("Error saving to localStorage:", error);
@@ -43,22 +46,25 @@ function Todolist() {
       if (editIndex !== -1) {
         const updatedTodos = [...todos];
         updatedTodos[editIndex] = {
+          ...updatedTodos[editIndex],
           task: inputValue,
-          completed: updatedTodos[editIndex].completed,
         };
         setTodos(updatedTodos);
         setInputValue("");
         setEditIndex(-1);
       } else {
-        setTodos([...todos, { task: inputValue, completed: false }]);
+        setTodos([...todos, { task: inputValue, completed: false, date }]);
         setInputValue("");
       }
     }
   };
 
   const editTodo = (index) => {
-    setInputValue(todos[index].task);
-    setEditIndex(index);
+    setInputValue(filteredTodos[index].task);
+    const globalIndex = todos.findIndex(
+      (todo) => todo === filteredTodos[index]
+    );
+    setEditIndex(globalIndex);
   };
 
   const cancelEdit = () => {
@@ -67,19 +73,28 @@ function Todolist() {
   };
 
   const removeTodo = (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
+    const globalIndex = todos.findIndex(
+      (todo) => todo === filteredTodos[index]
+    );
+    const updatedTodos = todos.filter((_, i) => i !== globalIndex);
     setTodos(updatedTodos);
   };
 
   const toggleCompleted = (index) => {
+    const globalIndex = todos.findIndex(
+      (todo) => todo === filteredTodos[index]
+    );
     const updatedTodos = [...todos];
-    updatedTodos[index].completed = !updatedTodos[index].completed;
+    updatedTodos[globalIndex].completed =
+      !updatedTodos[globalIndex].completed;
     setTodos(updatedTodos);
   };
 
+  const filteredTodos = todos.filter((todo) => todo.date === date);
+
   return (
     <div className="todo-container">
-      <h1>To-Do List</h1>
+      <h1>To-Do List for {date}</h1>
       <div className="input-section">
         <input
           type="text"
@@ -104,7 +119,7 @@ function Todolist() {
         )}
       </div>
       <ul className="todo-list">
-        {todos.map((todo, index) => (
+        {filteredTodos.map((todo, index) => (
           <li
             key={index}
             className={`todo-item ${todo.completed ? "completed" : ""}`}
@@ -127,6 +142,13 @@ function Todolist() {
           </li>
         ))}
       </ul>
+
+      {/* ✅ Save Button */}
+      <div className="bottom-section">
+        <button className="save-btn" onClick={() => navigate("/all-tasks")}>
+          Save
+        </button>
+      </div>
     </div>
   );
 }
