@@ -26,7 +26,18 @@ function Todolist() {
   });
 
   const [inputValue, setInputValue] = useState("");
+  const [subject, setSubject] = useState(() => {
+    try {
+      const storedSubjects = localStorage.getItem("subjects");
+      const subjects = storedSubjects ? JSON.parse(storedSubjects) : {};
+      return subjects[date] || "";
+    } catch (error) {
+      console.error("Error parsing localStorage subjects:", error);
+      return "";
+    }
+  });
   const [editIndex, setEditIndex] = useState(-1);
+  const [filter, setFilter] = useState("all"); // Filter state
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -36,10 +47,14 @@ function Todolist() {
     }
     try {
       localStorage.setItem("todos", JSON.stringify(todos));
+      const storedSubjects = localStorage.getItem("subjects");
+      const subjects = storedSubjects ? JSON.parse(storedSubjects) : {};
+      subjects[date] = subject;
+      localStorage.setItem("subjects", JSON.stringify(subjects));
     } catch (error) {
       console.error("Error saving to localStorage:", error);
     }
-  }, [todos]);
+  }, [todos, subject, date]);
 
   const addTodo = () => {
     if (inputValue.trim() !== "") {
@@ -90,11 +105,17 @@ function Todolist() {
     setTodos(updatedTodos);
   };
 
-  const filteredTodos = todos.filter((todo) => todo.date === date);
+  // Filter todos based on date and selected filter
+  const filteredTodos = todos.filter((todo) => {
+    if (todo.date !== date) return false;
+    if (filter === "completed") return todo.completed;
+    if (filter === "pending") return !todo.completed;
+    return true; // "all" filter
+  });
 
   return (
     <div className="todo-container">
-      <h1>To-Do List for {date}</h1>
+      <h1>Tasks for {date}</h1>
       <div className="input-section">
         <input
           type="text"
@@ -117,6 +138,38 @@ function Todolist() {
             Add
           </button>
         )}
+      </div>
+      <div className="subject-filter-section">
+        <label htmlFor="subject" className="subject-label">
+          Subject
+        </label>
+        <input
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Enter subject"
+          className="subject-field"
+        />
+        <div className="filter-section">
+          <button
+            className={`filter-btn ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            All
+          </button>
+          <button
+            className={`filter-btn ${filter === "completed" ? "active" : ""}`}
+            onClick={() => setFilter("completed")}
+          >
+            Completed
+          </button>
+          <button
+            className={`filter-btn ${filter === "pending" ? "active" : ""}`}
+            onClick={() => setFilter("pending")}
+          >
+            Pending
+          </button>
+        </div>
       </div>
       <ul className="todo-list">
         {filteredTodos.map((todo, index) => (

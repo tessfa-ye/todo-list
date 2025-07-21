@@ -21,6 +21,7 @@ function CalendarPage() {
   return (
     <div className="calendar-container">
       <h1>📅 Plan Your Tasks</h1>
+      <h3> First please select a date to add your tasks</h3>
       <input
         type="date"
         className="calendar-input"
